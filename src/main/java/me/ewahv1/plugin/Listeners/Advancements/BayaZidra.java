@@ -17,7 +17,6 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 public class BayaZidra implements Listener {
@@ -27,12 +26,15 @@ public class BayaZidra implements Listener {
   public BayaZidra(JavaPlugin plugin) {
     this.plugin = plugin;
     Bukkit.getPluginManager().registerEvents(this, plugin);
-    plugin.getLogger().info(ChatColor.GREEN + "[DEBUG] Listener de Baya Zidra registrado correctamente.");
+    plugin.getLogger().info("[DEBUG][BayaZidra.java] Listener de Baya Zidra registrado correctamente.");
   }
 
   @EventHandler
   public void onPlayerDamage(EntityDamageEvent event) {
+    Bukkit.getLogger().info("[DEBUG][BayaZidra.java][onPlayerDamage] Evento onPlayerDamage disparado.");
+
     if (!(event.getEntity() instanceof Player)) {
+      Bukkit.getLogger().info("[DEBUG][BayaZidra.java][onPlayerDamage] Entidad no es un jugador, ignorando evento.");
       return;
     }
 
@@ -40,9 +42,12 @@ public class BayaZidra implements Listener {
     double health = player.getHealth();
     double maxHealth = player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
 
-    // Verificar si la vida del jugador está por debajo de 3 corazones (6 puntos de
-    // vida)
+    Bukkit.getLogger()
+        .info("[DEBUG][BayaZidra.java][onPlayerDamage] Vida actual del jugador " + player.getName() + ": " + health);
+
     if (health >= 6) {
+      Bukkit.getLogger().info(
+          "[DEBUG][BayaZidra.java][onPlayerDamage] La vida del jugador es mayor o igual a 6. No se aplica Baya Zidra.");
       return;
     }
 
@@ -50,10 +55,9 @@ public class BayaZidra implements Listener {
     Inventory bolsa = Bukkit.createInventory(null, 9, ChatColor.GOLD + "Bolsa de Trinkets");
     GenerarUserBolsaData.loadPlayerBolsa(playerUUID, bolsa);
 
-    // Cargar datos de trinkets.yml
     File trinketsFile = new File(plugin.getDataFolder(), "trinkets.yml");
     if (!trinketsFile.exists()) {
-      plugin.getLogger().severe("[ERROR] El archivo trinkets.yml no existe.");
+      plugin.getLogger().severe("[ERROR][BayaZidra.java][onPlayerDamage] El archivo trinkets.yml no existe.");
       return;
     }
 
@@ -62,31 +66,37 @@ public class BayaZidra implements Listener {
         .getValues(false);
 
     if (bayaZidraData == null) {
-      plugin.getLogger().severe("[ERROR] No se encontró la configuración de Baya Zidra en trinkets.yml.");
+      plugin.getLogger().severe(
+          "[ERROR][BayaZidra.java][onPlayerDamage] No se encontró la configuración de Baya Zidra en trinkets.yml.");
       return;
     }
 
-    boolean consumable = (int) bayaZidraData.getOrDefault("consumable", 0) > 0;
+    int consumable = (int) bayaZidraData.getOrDefault("consumable", 0);
+    Bukkit.getLogger()
+        .info("[DEBUG][BayaZidra.java][onPlayerDamage] Propiedad consumable para Baya Zidra: " + consumable);
 
-    // Buscar la Baya Zidra en la bolsa
     for (int i = 0; i < bolsa.getSize(); i++) {
       ItemStack item = bolsa.getItem(i);
       if (item != null && item.hasItemMeta() &&
-          item.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&2BayaZidra"))) {
-        // Curar al jugador 2.5 corazones (5 puntos de vida)
-        double healAmount = Math.min(health + 5, maxHealth);
+          item.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&2&lBayaZidra"))) {
+        Bukkit.getLogger()
+            .info("[DEBUG][BayaZidra.java][onPlayerDamage] Baya Zidra encontrada en la bolsa del jugador.");
+
+        double healAmount = Math.min(health + (maxHealth / 2), maxHealth); // Curar la mitad de la vida máxima
         player.setHealth(healAmount);
 
-        // Enviar el mensaje en el ActionBar
-        sendActionBar(player, ChatColor.GREEN + "La Baya Zidra te ha curado 2.5 corazones!");
+        sendActionBar(player, ChatColor.GREEN + "La Baya Zidra te ha curado la mitad de tu vida máxima!");
+        plugin.getLogger().info("[DEBUG][BayaZidra.java][onPlayerDamage] El jugador " + player.getName()
+            + " fue curado por la Baya Zidra.");
 
-        plugin.getLogger().info("[DEBUG] El jugador " + player.getName() + " fue curado por la Baya Zidra.");
-
-        // Eliminar la Baya Zidra si es consumible
-        if (consumable) {
-          bolsa.setItem(i, null); // Eliminar el ítem de la bolsa
-          GenerarUserBolsaData.savePlayerBolsa(playerUUID, bolsa); // Guardar la bolsa sin el ítem
-          plugin.getLogger().info("[DEBUG] La Baya Zidra fue consumida y eliminada.");
+        // Verificar si el trinket es consumible
+        if (consumable == 1) {
+          bolsa.setItem(i, null); // Eliminar el trinket
+          GenerarUserBolsaData.savePlayerBolsa(playerUUID, bolsa);
+          plugin.getLogger()
+              .info("[DEBUG][BayaZidra.java][onPlayerDamage] La Baya Zidra fue consumida y eliminada de la bolsa.");
+        } else {
+          Bukkit.getLogger().info("[DEBUG][BayaZidra.java][onPlayerDamage] La Baya Zidra no es consumible.");
         }
         break;
       }
@@ -94,6 +104,7 @@ public class BayaZidra implements Listener {
   }
 
   private void sendActionBar(Player player, String message) {
+    Bukkit.getLogger().info("[DEBUG][BayaZidra.java][sendActionBar] Enviando mensaje al ActionBar: " + message);
     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
   }
 }

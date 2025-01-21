@@ -1,9 +1,11 @@
-me\ewahv1\plugin\Utils\CopyYMLs.class
 me\ewahv1\plugin\Utils\UtilsYML.class
-me\ewahv1\plugin\Commands\BolsaTrinketsCommand.class
-me\ewahv1\plugin\Listeners\Advancements\MissingNo.class
+me\ewahv1\plugin\Utils\TrinketsDiscover.class
 me\ewahv1\plugin\Listeners\Advancements\BayaZidra.class
 me\ewahv1\plugin\Main.class
 me\ewahv1\plugin\Utils\GenerarBayaZidra.class
 me\ewahv1\plugin\Utils\BolsaListener.class
+me\ewahv1\plugin\Utils\CopyYMLs.class
+me\ewahv1\plugin\Commands\BolsaTrinketsCommand.class
+me\ewahv1\plugin\Listeners\Advancements\MissingNo.class
+me\ewahv1\plugin\Utils\GenerarMissingNo.class
 me\ewahv1\plugin\Utils\GenerarUserBolsaData.class

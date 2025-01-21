@@ -1,7 +1,7 @@
 Trinkets:
   Advancements:
     BayaZidra:
-      name: "&2BayaZidra"
+      name: "&2&lBayaZidra"
       lore: 
         - "&7Parece una pera"
         - ""
@@ -14,10 +14,12 @@ Trinkets:
       consumable: 1
       tier: 1
     MissigNo:
-      name: "&7MissingNo"
+      name: "&7&lMissingNo"
       lore:
+        - "&7¿Error?"
         - ""
-        - ""
+        - "&7Al recibir un golpe"
+        - "&7probabilidad del 5% de que tu armadura cambie"
         - ""
         - "&7Slot: &e&lBolsa de Trinkets"
       customModelData: 2
@@ -25,7 +27,7 @@ Trinkets:
       tier: 1
   Crafted:
     BandaFocus:
-      name: "&7&Banda Focus"
+      name: "&7&lBanda Focus"
       lore:
         - ""
         - ""

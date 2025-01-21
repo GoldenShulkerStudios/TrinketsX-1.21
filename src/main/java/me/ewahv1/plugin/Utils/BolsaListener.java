@@ -17,9 +17,24 @@ public class BolsaListener implements Listener {
 
       Inventory bolsa = event.getInventory();
 
+      // Depuración: Inventario cerrado
+      player.getServer().getLogger()
+          .info("[DEBUG][BolsaListener.java][onInventoryClose] Inventario 'Bolsa de Trinkets' cerrado por el jugador: "
+              + player.getName());
+
       // Guardar la Bolsa al cerrar el inventario
-      GenerarUserBolsaData.savePlayerBolsa(playerUUID, bolsa);
-      player.sendMessage(ChatColor.GREEN + "¡Bolsa de Trinkets guardada!");
+      try {
+        GenerarUserBolsaData.savePlayerBolsa(playerUUID, bolsa);
+        player.sendMessage(ChatColor.GREEN + "¡Bolsa de Trinkets guardada correctamente!");
+        player.getServer().getLogger()
+            .info("[DEBUG][BolsaListener.java][onInventoryClose] Bolsa guardada correctamente para el jugador: "
+                + player.getName());
+      } catch (Exception e) {
+        player.getServer().getLogger()
+            .severe("[ERROR][BolsaListener.java][onInventoryClose] Error al guardar la bolsa para el jugador: "
+                + player.getName() + " - " + e.getMessage());
+        e.printStackTrace();
+      }
     }
   }
 }

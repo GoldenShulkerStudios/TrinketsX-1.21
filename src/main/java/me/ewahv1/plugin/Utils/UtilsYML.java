@@ -17,9 +17,11 @@ public class UtilsYML {
         if (!pluginFolder.exists()) {
             boolean created = pluginFolder.mkdirs();
             if (created) {
-                System.out.println("Directorio del plugin creado: " + pluginFolder.getAbsolutePath());
+                System.out.println("[DEBUG][UtilsYML.java][Constructor] Directorio del plugin creado: "
+                        + pluginFolder.getAbsolutePath());
             } else {
-                System.err.println("Error al crear el directorio del plugin: " + pluginFolder.getAbsolutePath());
+                System.err.println("[ERROR][UtilsYML.java][Constructor] Error al crear el directorio del plugin: "
+                        + pluginFolder.getAbsolutePath());
             }
         }
 
@@ -30,11 +32,14 @@ public class UtilsYML {
         if (!file.exists()) {
             try {
                 file.createNewFile();
-                System.out.println("Archivo creado: " + file.getAbsolutePath());
+                System.out.println("[DEBUG][UtilsYML.java][Constructor] Archivo creado: " + file.getAbsolutePath());
             } catch (IOException e) {
-                System.err.println("Error al crear el archivo: " + file.getAbsolutePath());
+                System.err.println(
+                        "[ERROR][UtilsYML.java][Constructor] Error al crear el archivo: " + file.getAbsolutePath());
                 e.printStackTrace();
             }
+        } else {
+            System.out.println("[DEBUG][UtilsYML.java][Constructor] Archivo cargado: " + file.getAbsolutePath());
         }
     }
 
@@ -44,7 +49,11 @@ public class UtilsYML {
     public void saveConfig() {
         try {
             config.save(file);
+            System.out.println("[DEBUG][UtilsYML.java][saveConfig] Configuración guardada correctamente: "
+                    + file.getAbsolutePath());
         } catch (IOException e) {
+            System.err.println(
+                    "[ERROR][UtilsYML.java][saveConfig] Error al guardar la configuración: " + file.getAbsolutePath());
             e.printStackTrace();
         }
     }
@@ -57,7 +66,10 @@ public class UtilsYML {
      * @return true si el jugador ya desbloqueó el trinket, de lo contrario false.
      */
     public boolean hasUnlockedTrinket(UUID playerUUID, String trinketKey) {
-        return config.contains("Players." + playerUUID + "." + trinketKey);
+        boolean result = config.contains("Players." + playerUUID + "." + trinketKey);
+        System.out.println("[DEBUG][UtilsYML.java][hasUnlockedTrinket] Verificación para jugador: " + playerUUID
+                + ", Trinket: " + trinketKey + " -> " + result);
+        return result;
     }
 
     /**
@@ -67,6 +79,8 @@ public class UtilsYML {
      * @param trinketKey Clave del trinket.
      */
     public void unlockTrinket(UUID playerUUID, String trinketKey) {
+        System.out.println("[DEBUG][UtilsYML.java][unlockTrinket] Desbloqueando trinket para jugador: " + playerUUID
+                + ", Trinket: " + trinketKey);
         config.set("Players." + playerUUID + "." + trinketKey, true);
         saveConfig();
     }

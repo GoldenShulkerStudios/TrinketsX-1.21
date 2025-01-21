@@ -20,14 +20,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GenerarBayaZidra implements Listener {
+public class GenerarMissingNo implements Listener {
 
     private final JavaPlugin plugin;
     private final File trinketsDiscoverFile;
     private final FileConfiguration trinketsDiscoverConfig;
     private final Set<String> processedPlayers = new HashSet<>();
 
-    public GenerarBayaZidra(JavaPlugin plugin) {
+    public GenerarMissingNo(JavaPlugin plugin) {
         this.plugin = plugin;
 
         // Inicializar archivo y configuración predeterminada
@@ -38,17 +38,17 @@ public class GenerarBayaZidra implements Listener {
             try {
                 trinketsDiscoverFile.createNewFile();
                 Bukkit.getLogger()
-                        .info("[DEBUG][GenerarBayaZidra.java][Constructor] Archivo trinkets_discover.yml creado.");
+                        .info("[DEBUG][GenerarMissingNo.java][Constructor] Archivo trinkets_discover.yml creado.");
             } catch (IOException e) {
                 Bukkit.getLogger()
-                        .severe("[ERROR][GenerarBayaZidra.java][Constructor] No se pudo crear trinkets_discover.yml: "
+                        .severe("[ERROR][GenerarMissingNo.java][Constructor] No se pudo crear trinkets_discover.yml: "
                                 + e.getMessage());
                 e.printStackTrace();
             }
         }
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        Bukkit.getLogger().info("[DEBUG][GenerarBayaZidra.java][Constructor] Listener registrado correctamente.");
+        Bukkit.getLogger().info("[DEBUG][GenerarMissingNo.java][Constructor] Listener registrado correctamente.");
     }
 
     @EventHandler
@@ -57,21 +57,21 @@ public class GenerarBayaZidra implements Listener {
         NamespacedKey advancementKey = event.getAdvancement().getKey();
 
         Bukkit.getLogger()
-                .info("[DEBUG][GenerarBayaZidra.java][onPlayerAdvancementDone] Evento detectado para el jugador: "
+                .info("[DEBUG][GenerarMissingNo.java][onPlayerAdvancementDone] Evento detectado para el jugador: "
                         + player.getName());
         Bukkit.getLogger()
-                .info("[DEBUG][GenerarBayaZidra.java][onPlayerAdvancementDone] Clave del avance: " + advancementKey);
+                .info("[DEBUG][GenerarMissingNo.java][onPlayerAdvancementDone] Clave del avance: " + advancementKey);
 
         // Evitar procesamiento múltiple para el mismo avance
         String playerKey = player.getUniqueId().toString() + ":" + advancementKey.toString();
         if (processedPlayers.contains(playerKey)) {
-            Bukkit.getLogger().info("[DEBUG][GenerarBayaZidra.java][onPlayerAdvancementDone] Avance ya procesado.");
+            Bukkit.getLogger().info("[DEBUG][GenerarMissingNo.java][onPlayerAdvancementDone] Avance ya procesado.");
             return;
         }
 
-        if (advancementKey.toString().endsWith("baya_zidra")) {
+        if (advancementKey.toString().endsWith("missigno")) {
             Bukkit.getLogger()
-                    .info("[DEBUG][GenerarBayaZidra.java][onPlayerAdvancementDone] Avance baya_zidra detectado.");
+                    .info("[DEBUG][GenerarMissingNo.java][onPlayerAdvancementDone] Avance MissingNo detectado.");
 
             processedPlayers.add(playerKey); // Marcar como procesado
 
@@ -81,25 +81,25 @@ public class GenerarBayaZidra implements Listener {
             giveTrinket(player);
         } else {
             Bukkit.getLogger().info(
-                    "[DEBUG][GenerarBayaZidra.java][onPlayerAdvancementDone] Avance no relevante para Baya Zidra: "
+                    "[DEBUG][GenerarMissingNo.java][onPlayerAdvancementDone] Avance no relevante para MissingNo: "
                             + advancementKey);
         }
     }
 
     private void updateYMLDiscoveries(Player player) {
-        if (!trinketsDiscoverConfig.getBoolean("Discoveries.BayaZidra", false)) {
-            trinketsDiscoverConfig.set("Discoveries.BayaZidra", true);
+        if (!trinketsDiscoverConfig.getBoolean("Discoveries.MissingNo", false)) {
+            trinketsDiscoverConfig.set("Discoveries.MissingNo", true);
             saveTrinketsDiscoverConfig();
             sendDiscoveryMessage(player);
         } else {
             Bukkit.getLogger().info(
-                    "[DEBUG][GenerarBayaZidra.java][updateYMLDiscoveries] Baya Zidra ya estaba descubierta en YML.");
+                    "[DEBUG][GenerarMissingNo.java][updateYMLDiscoveries] MissingNo ya estaba descubierto en YML.");
         }
     }
 
     private void sendDiscoveryMessage(Player player) {
-        String discoveryMessage = "§a§l" + player.getName() + " descubrió un nuevo trinket: §6Baya Zidra";
-        String instructionMessage = "§eTener 10 §dsweet_berries §een el inventario para obtenerlo.";
+        String discoveryMessage = "§a§l" + player.getName() + " descubrió un nuevo trinket: §7MissingNo";
+        String instructionMessage = "§ePosee un efecto único al recibir daño.";
 
         // Enviar los mensajes a todos los jugadores
         Bukkit.broadcastMessage(discoveryMessage);
@@ -108,20 +108,20 @@ public class GenerarBayaZidra implements Listener {
 
     private void giveTrinket(Player player) {
         Bukkit.getLogger()
-                .info("[DEBUG][GenerarBayaZidra.java][giveTrinket] Entregando el trinket Baya Zidra al jugador.");
+                .info("[DEBUG][GenerarMissingNo.java][giveTrinket] Entregando el trinket MissingNo al jugador.");
 
         File trinketsFile = new File(plugin.getDataFolder(), "trinkets.yml");
         if (!trinketsFile.exists()) {
             Bukkit.getLogger()
-                    .severe("[ERROR][GenerarBayaZidra.java][giveTrinket] Archivo trinkets.yml no encontrado.");
+                    .severe("[ERROR][GenerarMissingNo.java][giveTrinket] Archivo trinkets.yml no encontrado.");
             return;
         }
 
         FileConfiguration config = YamlConfiguration.loadConfiguration(trinketsFile);
 
-        String name = translateColorCodes(config.getString("Trinkets.Advancements.BayaZidra.name", "§f§lBaya Zidra"));
-        List<String> lore = translateLore(config.getStringList("Trinkets.Advancements.BayaZidra.lore"));
-        int customModelData = config.getInt("Trinkets.Advancements.BayaZidra.customModelData", 0);
+        String name = translateColorCodes(config.getString("Trinkets.Advancements.MissigNo.name", "§7§lMissingNo"));
+        List<String> lore = translateLore(config.getStringList("Trinkets.Advancements.MissigNo.lore"));
+        int customModelData = config.getInt("Trinkets.Advancements.MissigNo.customModelData", 2);
 
         ItemStack item = new ItemStack(Material.PAPER);
         ItemMeta meta = item.getItemMeta();
@@ -133,11 +133,13 @@ public class GenerarBayaZidra implements Listener {
         }
 
         if (player.getInventory().addItem(item).isEmpty()) {
-            Bukkit.getLogger().info("[DEBUG][GenerarBayaZidra.java][giveTrinket] Baya Zidra añadida al inventario de "
+            Bukkit.getLogger().info("[DEBUG][GenerarMissingNo.java][giveTrinket] MissingNo añadido al inventario de "
                     + player.getName());
         } else {
+            // Dejar caer el ítem si el inventario está lleno
+            player.getWorld().dropItemNaturally(player.getLocation(), item);
             Bukkit.getLogger()
-                    .warning("[WARNING][GenerarBayaZidra.java][giveTrinket] Inventario lleno para el jugador: "
+                    .warning("[WARNING][GenerarMissingNo.java][giveTrinket] Inventario lleno, MissingNo dejado en el mundo para "
                             + player.getName());
         }
     }
@@ -146,10 +148,10 @@ public class GenerarBayaZidra implements Listener {
         try {
             trinketsDiscoverConfig.save(trinketsDiscoverFile);
             Bukkit.getLogger().info(
-                    "[DEBUG][GenerarBayaZidra.java][saveTrinketsDiscoverConfig] Archivo trinkets_discover.yml guardado correctamente.");
+                    "[DEBUG][GenerarMissingNo.java][saveTrinketsDiscoverConfig] Archivo trinkets_discover.yml guardado correctamente.");
         } catch (IOException e) {
             Bukkit.getLogger().severe(
-                    "[ERROR][GenerarBayaZidra.java][saveTrinketsDiscoverConfig] No se pudo guardar trinkets_discover.yml: "
+                    "[ERROR][GenerarMissingNo.java][saveTrinketsDiscoverConfig] No se pudo guardar trinkets_discover.yml: "
                             + e.getMessage());
             e.printStackTrace();
         }
